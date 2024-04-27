@@ -1,0 +1,22 @@
+<!-- booking_confirmation.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Add necessary meta tags, title, and CSS links -->
+</head>
+<body>
+    <div class="container">
+        <h2 class="text-center mb-4">Booking Confirmation</h2>
+        <p>Your booking details:</p>
+        <ul>
+            <li>Name: {{ booking.name }}</li>
+            <li>Surname: {{ booking.surname }}</li>
+            <!-- Add other booking details here -->
+        </ul>
+        <p>Thank you for booking with us!</p>
+        
+        <!-- Option to book another car -->
+        <a href="{% url 'booking_form' %}" class="btn btn-primary">Book Another Car</a>
+    </div>
+</body>
+</html>
