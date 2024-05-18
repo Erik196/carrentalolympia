@@ -16,7 +16,7 @@ class BookingForm(forms.ModelForm):
 
     class Meta:
         model = Booking
-        fields = ['name', 'surname', 'nationality', 'city', 'address', 'phone_number', 'patent_number', 'insurance', 'period_start', 'period_end']
+        fields = ['name', 'surname', 'nationality', 'city', 'address', 'email', 'phone_number', 'patent_number', 'insurance', 'period_start', 'period_end']
         widgets = {
             'period_start': DateTimeInput(attrs={'type': 'date', 'format': '%Y-%m-%d'}),
             'period_end': DateTimeInput(attrs={'type': 'date', 'format': '%Y-%m-%d'}),

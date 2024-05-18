@@ -9,6 +9,7 @@ class Booking(models.Model):
     nationality = models.CharField(max_length=100)
     city = models.CharField(max_length=100)
     address = models.CharField(max_length=200)
+    email = models.CharField(max_length=200, default='johnsmith@gmail.com')
     phone_number = models.CharField(max_length=20)
     patent_number = models.CharField(max_length=50)
     insurance = models.CharField(max_length=50, default='normal or not')
@@ -18,14 +19,6 @@ class Booking(models.Model):
 
     def __str__(self):
         return f'{self.name} {self.surname}'
-
-class UnavailableDate(models.Model):
-    car = models.ForeignKey(Car, on_delete=models.CASCADE)
-    start_date = models.DateField()
-    end_date = models.DateField()
-
-    def __str__(self):
-        return f"{self.car} - {self.start_date} to {self.end_date}"
 
 class BusyDate(models.Model):
     car_id = models.IntegerField()

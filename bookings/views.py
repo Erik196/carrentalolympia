@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, HttpResponse
 from django.contrib import messages
 from datetime import timedelta
 from .forms import BookingForm
-from .models import Booking, UnavailableDate
+from .models import Booking
 from blog.models import Car
 from django.urls import reverse
 from django.utils import timezone
@@ -11,28 +11,50 @@ import requests
 from .models import BusyDate
 import json
 from django.http import JsonResponse
+from django.core.mail import send_mail
+from django.conf import settings
 
 def booking_form(request):
     if request.method == 'POST':
         form = BookingForm(request.POST)
         if form.is_valid():
             car = form.cleaned_data['car']
+            car_id = form.cleaned_data['car'].id
             start_time = form.cleaned_data['period_start']
             end_time = form.cleaned_data['period_end']
+
+            name = form.cleaned_data['name']
+            surname = form.cleaned_data['surname']
+            nationality = form.cleaned_data['nationality']
+            city = form.cleaned_data['city']
+            address = form.cleaned_data['address']
+            email = form.cleaned_data['email']
+            phone_number = form.cleaned_data['phone_number']
+            patent_number = form.cleaned_data['patent_number']
+            insurance = form.cleaned_data['insurance']
+
             booking = form.save(commit=False)
             booking.save()
 
             # Store the unavailable date range
-            UnavailableDate.objects.create(
-                car=car,
+            BusyDate.objects.create(
+                car_id=car_id,
                 start_date=start_time,
                 end_date=end_time
             )
 
-            
+            form_data_string = f"Car ID: {car}\nStart Time: {start_time}\nEnd Time: {end_time}\n\nName: {name}\nSurname: {surname}\nNationality: {nationality}\nCity: {city}\n Address: {address}\nPhone Number: {phone_number}\nPatent Number: {patent_number}\nInsurance: {insurance}"
+
+            send_mail(
+                'Booking Form',
+                form_data_string,
+                settings.EMAIL_HOST_USER,
+                ['carrentalolympia@gmail.com', email],
+                fail_silently=False
+            )
 
             messages.success(request, "Your booking has been successfully submitted.")
-            return redirect(reverse('booking_confirmation'))  # Redirect to confirmation page
+            return redirect(reverse('booking_confirmation'))
         else:
             for field, errors in form.errors.items():
                 for error in errors:
@@ -83,37 +105,7 @@ def get_unavailable_dates(request, car_id):
     except BusyDate.DoesNotExist:
         return JsonResponse([], safe=False)
 
-def submit_booking(request):
-    if request.method == 'POST':
-        car_id = request.POST.get('car_id')
-        start_date = request.POST.get('start_date')
-        end_date = request.POST.get('end_date')
-        
-        # Save the busy date to the database
-        busy_date = BusyDate(car_id=car_id, start_date=start_date, end_date=end_date)
-        busy_date.save()
-        
-        return redirect('booking_success')  # Redirect to success page after submission
-    else:
-        # Handle GET request
-        # Render your booking form template
-        return render(request, 'booking_confirmation.html')
-
 def render_calendar(request):
     busy_dates = BusyDate.objects.all()
     busy_dates_json = [{'title': 'Unavailable', 'start': str(busy.start_date), 'end': str(busy.end_date)} for busy in busy_dates]
     return JsonResponse(busy_dates_json, safe=False)
-
-def save_busy_dates(request):
-    if request.method == 'POST':
-        car_id = request.POST.get('car_id')
-        busy_dates = request.POST.getlist('busy_dates[]')  # Assuming busy_dates is sent as a list
-        
-        # Iterate over busy_dates list and create BusyDate instances
-        for date_str in busy_dates:
-            busy_date = BusyDate(car_id=car_id, start_date=date_str, end_date=date_str)
-            busy_date.save()  # Save the instance to the database
-        
-        return JsonResponse({'status': 'success'})
-    else:
-        return JsonResponse({'status': 'error', 'message': 'Invalid request method'}, status=400)
