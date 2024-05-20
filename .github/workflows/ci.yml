@@ -6,13 +6,16 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    strategy:
+      matrix:
+        node-version: [20.x]
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           submodules: false  # Disable submodule fetching
 
-      # Add your other build steps here
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
