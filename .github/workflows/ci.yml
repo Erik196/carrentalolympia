@@ -7,7 +7,7 @@ on:
     branches: [ main ]
 
 jobs:
-  build:
+  build-and-test:
     runs-on: ubuntu-latest
 
     steps:
@@ -24,7 +24,24 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
+      - name: Run tests
+        run: |
+          pytest
+
+      - name: Set up Ruby
+        uses: actions/setup-ruby@v1
+        with:
+          ruby-version: '3.0'
+
+      - name: Install html-proofer
+        run: |
+          gem install html-proofer
+
+      - name: Build the site
+        run: |
+          npm install
+          npm run build
+
       - name: Check for broken links
         run: |
-          npm install -g html-proofer
-          htmlproofer ./dist --check-html --allow-hash-href --disable-externa
+          htmlproofer ./dist --check-html --allow-hash-href --disable-external
