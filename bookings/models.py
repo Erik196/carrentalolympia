@@ -1,8 +1,13 @@
 from django.db import models
 from django.utils import timezone
 from blog.models import Car
-
+import pycountry
 class Booking(models.Model):
+    
+
+    COUNTRY_CHOICES = [(country.alpha_2, country.name) for country in pycountry.countries]
+
+
     INSURANCE_CHOICES = [
         ('basic', 'Basic'),
         ('full', 'Full'),  # Corrected to 'complicate'
@@ -10,7 +15,7 @@ class Booking(models.Model):
     car = models.ForeignKey(Car, on_delete=models.CASCADE, null=True, blank=True)
     name = models.CharField(max_length=100)
     surname = models.CharField(max_length=100)
-    nationality = models.CharField(max_length=100)
+    nationality = models.CharField(max_length=20, choices=COUNTRY_CHOICES, default='AL')
     city = models.CharField(max_length=100)
     address = models.CharField(max_length=200)
     email = models.CharField(max_length=200, default='johnsmith@gmail.com')

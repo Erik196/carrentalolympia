@@ -7,6 +7,9 @@
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <link href='https://unpkg.com/fullcalendar@5/main.min.css' rel='stylesheet' />
     <style>
+        select#id_nationality {
+    width: 200px;
+}
         body {
             background-color: #f8f9fa;
         }
@@ -163,6 +166,8 @@
                     calendar.render();
                 }
             });
+
+            
         
             // Function to render busy dates in the calendar
             function renderCalendar(busyDates) {
