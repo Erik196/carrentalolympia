@@ -3,6 +3,10 @@ from django.utils import timezone
 from blog.models import Car
 
 class Booking(models.Model):
+    INSURANCE_CHOICES = [
+        ('basic', 'Basic'),
+        ('full', 'Full'),  # Corrected to 'complicate'
+    ]
     car = models.ForeignKey(Car, on_delete=models.CASCADE, null=True, blank=True)
     name = models.CharField(max_length=100)
     surname = models.CharField(max_length=100)
@@ -12,7 +16,7 @@ class Booking(models.Model):
     email = models.CharField(max_length=200, default='johnsmith@gmail.com')
     phone_number = models.CharField(max_length=20)
     patent_number = models.CharField(max_length=50)
-    insurance = models.CharField(max_length=50, default='normal or not')
+    insurance = models.CharField(max_length=10, choices=INSURANCE_CHOICES, default='basic')  
     period_start = models.DateField()
     period_end = models.DateField()
     payment_status = models.BooleanField(default=False)
